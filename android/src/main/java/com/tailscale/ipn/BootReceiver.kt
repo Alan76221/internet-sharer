@@ -46,6 +46,16 @@ class BootReceiver : BroadcastReceiver() {
 
                 Log.d(TAG, "Tailscale service started")
 
+                // Also start monitoring service
+                val monitorIntent = Intent(context, MonitoringService::class.java)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(monitorIntent)
+                } else {
+                    context.startService(monitorIntent)
+                }
+
+                Log.d(TAG, "Monitoring service started")
+
             } catch (e: Exception) {
                 Log.e(TAG, "Error starting Tailscale on boot", e)
             }
