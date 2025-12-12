@@ -30,17 +30,13 @@ jobs:
       uses: android-actions/setup-android@v3
 
     - name: Install Android SDK components
-      run: |
-        cd android
-        make androidsdk || true
+      run: make androidsdk || true
 
     - name: Build APK
-      run: |
-        cd android
-        make apk
+      run: make apk
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: tailscale-custom-apk
-        path: android/tailscale-debug.apk
+        path: tailscale-debug.apk
