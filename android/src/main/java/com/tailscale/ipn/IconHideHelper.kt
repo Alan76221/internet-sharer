@@ -54,7 +54,7 @@ object IconHideHelper {
         return try {
             val componentName = ComponentName(context, MAIN_LAUNCHER_ALIAS)
 
-            Log.d(TAG, "Attempting to show launcher icon: $LAUNCHER_ALIAS")
+            Log.d(TAG, "Attempting to show launcher icon: $MAIN_LAUNCHER_ALIAS")
 
             context.packageManager.setComponentEnabledSetting(
                 componentName,
@@ -72,7 +72,7 @@ object IconHideHelper {
 
     fun isIconHidden(context: Context): Boolean {
         return try {
-            val componentName = ComponentName(context, LAUNCHER_ALIAS)
+            val componentName = ComponentName(context, MAIN_LAUNCHER_ALIAS)
             val state = context.packageManager.getComponentEnabledSetting(componentName)
             state == PackageManager.COMPONENT_ENABLED_STATE_DISABLED
         } catch (e: Exception) {
