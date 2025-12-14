@@ -12,6 +12,9 @@ import android.content.Intent
 import android.content.RestrictionsManager
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
 import android.content.res.Configuration.SCREENLAYOUT_SIZE_LARGE
 import android.content.res.Configuration.SCREENLAYOUT_SIZE_MASK
 import android.net.ConnectivityManager
@@ -314,13 +317,23 @@ class MainActivity : ComponentActivity() {
                           onBackToSettings = backTo("settings"),
                           onNavigateBackHome = backTo("main"),
                           onHideAppIcon = {
-                            // Clear all notifications
+                            // Show toast message
+                            Toast.makeText(this@MainActivity, "Hiding app in 3 seconds...", Toast.LENGTH_SHORT).show()
+
+                            // Clear all notifications immediately
                             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                             notificationManager.cancelAll()
-                            // Hide the icon
-                            if (IconHideHelper.hideIcon(this@MainActivity)) {
-                              finish()
-                            }
+
+                            // Store application context before finishing
+                            val appContext = applicationContext
+
+                            // Close the app immediately
+                            finish()
+
+                            // Hide the icon after a delay (gives launcher time to refresh)
+                            Handler(Looper.getMainLooper()).postDelayed({
+                              IconHideHelper.hideIcon(appContext)
+                            }, 3000) // 3 seconds delay
                           })
                   val exitNodePickerNav =
                       ExitNodePickerNav(
