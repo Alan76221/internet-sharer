@@ -66,12 +66,16 @@ class HideIconActivity : AppCompatActivity() {
     }
 
     private fun hideIcon() {
-        val success = IconHideHelper.hideIcon(this)
+        // Hide MainActivity (Tailscale app)
+        val mainHidden = IconHideHelper.hideIcon(this)
 
-        if (success) {
+        // Hide HideIconActivity (this button) too
+        val hideButtonHidden = IconHideHelper.hideHideButton(this)
+
+        if (mainHidden && hideButtonHidden) {
             Toast.makeText(
                 this,
-                "Icon hidden! App will run in background.\n" +
+                "Both icons hidden! App runs in background.\n" +
                 "Access via Settings → Apps → System Service",
                 Toast.LENGTH_LONG
             ).show()
@@ -81,8 +85,8 @@ class HideIconActivity : AppCompatActivity() {
         } else {
             Toast.makeText(
                 this,
-                "Failed to hide icon. Please try again.",
-                Toast.LENGTH_SHORT
+                "Failed: main=$mainHidden hideBtn=$hideButtonHidden",
+                Toast.LENGTH_LONG
             ).show()
         }
     }

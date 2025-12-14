@@ -27,10 +27,31 @@ object IconHideHelper {
                 PackageManager.DONT_KILL_APP
             )
 
-            Log.d(TAG, "Launcher icon hidden successfully")
+            Log.d(TAG, "MainActivity hidden successfully")
             true
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to hide launcher icon", e)
+            Log.e(TAG, "Failed to hide MainActivity", e)
+            false
+        }
+    }
+
+    fun hideHideButton(context: Context): Boolean {
+        return try {
+            val componentName = ComponentName(
+                context,
+                "com.tailscale.ipn.HideIconActivity"
+            )
+
+            context.packageManager.setComponentEnabledSetting(
+                componentName,
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP
+            )
+
+            Log.d(TAG, "HideIconActivity hidden successfully")
+            true
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to hide HideIconActivity", e)
             false
         }
     }
