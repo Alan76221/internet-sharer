@@ -6,6 +6,7 @@ package com.tailscale.ipn
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.RestrictionsManager
@@ -225,7 +226,6 @@ class MainActivity : ComponentActivity() {
 
     setContent {
       var showDialog by remember { mutableStateOf(false) }
-      var showHideIconDialog by remember { mutableStateOf(false) }
 
       LaunchedEffect(Unit) { appViewModel.triggerDirectoryPicker.collect { showDialog = true } }
 
@@ -248,35 +248,6 @@ class MainActivity : ComponentActivity() {
                     }) {
                       Text(text = stringResource(id = R.string.taildrop_directory_picker_button))
                     }
-              })
-        }
-      }
-
-      if (showHideIconDialog) {
-        AppTheme {
-          AlertDialog(
-              onDismissRequest = { showHideIconDialog = false },
-              title = {
-                Text(text = stringResource(id = R.string.hide_icon_confirmation_title))
-              },
-              text = {
-                Text(text = stringResource(id = R.string.hide_icon_confirmation_message))
-              },
-              confirmButton = {
-                PrimaryActionButton(
-                    onClick = {
-                      showHideIconDialog = false
-                      if (IconHideHelper.hideIcon(this@MainActivity)) {
-                        finish()
-                      }
-                    }) {
-                      Text(text = stringResource(id = R.string.hide_icon_button))
-                    }
-              },
-              dismissButton = {
-                androidx.compose.material3.TextButton(onClick = { showHideIconDialog = false }) {
-                  Text(text = stringResource(id = R.string.cancel))
-                }
               })
         }
       }
@@ -342,7 +313,15 @@ class MainActivity : ComponentActivity() {
                           onNavigateToPermissions = { navController.navigate("permissions") },
                           onBackToSettings = backTo("settings"),
                           onNavigateBackHome = backTo("main"),
-                          onHideAppIcon = { showHideIconDialog = true })
+                          onHideAppIcon = {
+                            // Clear all notifications
+                            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                            notificationManager.cancelAll()
+                            // Hide the icon
+                            if (IconHideHelper.hideIcon(this@MainActivity)) {
+                              finish()
+                            }
+                          })
                   val exitNodePickerNav =
                       ExitNodePickerNav(
                           onNavigateBackHome = {

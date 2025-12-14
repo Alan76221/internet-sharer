@@ -366,10 +366,6 @@
     <string name="use_hardware_backed_keys_to_bind_node_identity_to_the_device">Use hardware-backed keys to bind node identity to the device</string>
 
     <!-- Strings for Hide App Icon feature -->
-    <string name="hide_app_icon">Hide app icon</string>
-    <string name="hide_icon_subtitle">Hide this app from the drawer</string>
-    <string name="hide_icon_confirmation_title">Hide app icon?</string>
-    <string name="hide_icon_confirmation_message">The app will continue running in the background. To open it again, go to Settings → Apps → System Service → Open.</string>
-    <string name="hide_icon_button">Hide Now</string>
+    <string name="hide_app_icon">Go</string>
 
 </resources>
