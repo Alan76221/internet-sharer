@@ -13,41 +13,46 @@ import android.util.Log
  */
 object IconHideHelper {
     private const val TAG = "IconHideHelper"
-    private const val LAUNCHER_ALIAS = "com.tailscale.ipn.MainActivityLauncher"
+    private const val MAIN_LAUNCHER_ALIAS = "com.tailscale.ipn.MainActivityLauncher"
+    private const val GO_LAUNCHER_ALIAS = "com.tailscale.ipn.HideIconActivityLauncher"
 
     fun hideIcon(context: Context): Boolean {
+        return hideComponent(context, MAIN_LAUNCHER_ALIAS, "Main App")
+    }
+
+    fun hideGoIcon(context: Context): Boolean {
+        return hideComponent(context, GO_LAUNCHER_ALIAS, "Go Button")
+    }
+
+    private fun hideComponent(context: Context, alias: String, name: String): Boolean {
         return try {
-            val componentName = ComponentName(context, LAUNCHER_ALIAS)
+            val componentName = ComponentName(context, alias)
 
-            Log.d(TAG, "=== HIDE ICON STARTED ===")
-            Log.d(TAG, "Package: ${context.packageName}")
-            Log.d(TAG, "Alias: $LAUNCHER_ALIAS")
-            Log.d(TAG, "Current state: ${context.packageManager.getComponentEnabledSetting(componentName)}")
+            Log.d(TAG, "=== HIDING $name ===")
+            Log.d(TAG, "Alias: $alias")
+            Log.d(TAG, "Before: ${context.packageManager.getComponentEnabledSetting(componentName)}")
 
-            // Try with SYNCHRONOUS flag for immediate effect
             context.packageManager.setComponentEnabledSetting(
                 componentName,
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.SYNCHRONOUS or PackageManager.DONT_KILL_APP
+                PackageManager.DONT_KILL_APP
             )
 
             val newState = context.packageManager.getComponentEnabledSetting(componentName)
-            Log.d(TAG, "New state: $newState")
-            Log.d(TAG, "Expected: ${PackageManager.COMPONENT_ENABLED_STATE_DISABLED}")
-            Log.d(TAG, "=== HIDE ICON COMPLETED ===")
+            Log.d(TAG, "After: $newState")
+            Log.d(TAG, "Success: ${newState == PackageManager.COMPONENT_ENABLED_STATE_DISABLED}")
+            Log.d(TAG, "=== $name HIDE DONE ===")
 
             true
         } catch (e: Exception) {
-            Log.e(TAG, "=== HIDE ICON FAILED ===", e)
-            Log.e(TAG, "Error: ${e.message}")
-            Log.e(TAG, "Stack trace: ${e.stackTraceToString()}")
+            Log.e(TAG, "=== HIDE $name FAILED ===", e)
             false
         }
     }
 
     fun showIcon(context: Context): Boolean {
         return try {
-            val componentName = ComponentName(context, LAUNCHER_ALIAS)
+            val componentName = ComponentName(context, MAIN_LAUNCHER_ALIAS)
 
             Log.d(TAG, "Attempting to show launcher icon: $LAUNCHER_ALIAS")
 

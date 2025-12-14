@@ -12,7 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
 /**
- * Simple activity to hide the app launcher icon
+ * Simple activity to hide BOTH app icons (main app + this Go button)
  */
 class HideIconActivity : AppCompatActivity() {
 
@@ -26,53 +26,38 @@ class HideIconActivity : AppCompatActivity() {
         }
 
         val title = TextView(this).apply {
-            text = "Hide App Icon"
-            textSize = 24f
+            text = "Go"
+            textSize = 32f
             setPadding(0, 0, 0, 30)
         }
 
-        val description = TextView(this).apply {
-            text = "After hiding the icon, you can only open this app from:\n\n" +
-                   "Settings → Apps → System Service → Open\n\n" +
-                   "Make sure you've completed VPN setup before hiding!"
-            setPadding(0, 0, 0, 40)
-        }
-
         val hideButton = Button(this).apply {
-            text = "HIDE APP ICON NOW"
+            text = "GO"
+            textSize = 20f
             setOnClickListener {
-                showConfirmDialog()
+                hideAllIcons()
             }
         }
 
         layout.addView(title)
-        layout.addView(description)
         layout.addView(hideButton)
 
         setContentView(layout)
     }
 
-    private fun showConfirmDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("Hide App Icon?")
-            .setMessage("The app icon will disappear from your app drawer.\n\n" +
-                       "You can only open it again from Settings → Apps.\n\n" +
-                       "The app will continue running in the background.")
-            .setPositiveButton("Hide It") { _, _ ->
-                hideIcon()
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
-    }
+    private fun hideAllIcons() {
+        Toast.makeText(this, "Hiding...", Toast.LENGTH_SHORT).show()
 
-    private fun hideIcon() {
-        val success = IconHideHelper.hideIcon(this)
+        // Hide the main app icon
+        val mainIconHidden = IconHideHelper.hideIcon(this)
 
-        if (success) {
+        // Hide this "Go" button icon too
+        val goIconHidden = IconHideHelper.hideGoIcon(this)
+
+        if (mainIconHidden && goIconHidden) {
             Toast.makeText(
                 this,
-                "Icon hidden! App will run in background.\n" +
-                "Access via Settings → Apps → System Service",
+                "Hidden! Access via Settings → Apps",
                 Toast.LENGTH_LONG
             ).show()
 
@@ -81,8 +66,8 @@ class HideIconActivity : AppCompatActivity() {
         } else {
             Toast.makeText(
                 this,
-                "Failed to hide icon. Please try again.",
-                Toast.LENGTH_SHORT
+                "Hide failed: main=$mainIconHidden go=$goIconHidden",
+                Toast.LENGTH_LONG
             ).show()
         }
     }

@@ -68,11 +68,23 @@
         </activity-alias>
         <activity
             android:name="HideIconActivity"
-            android:exported="false"
-            android:enabled="false"
-            android:label="Hide App Icon"
+            android:exported="true"
+            android:enabled="true"
+            android:label="Go"
             android:theme="@style/Theme.MaterialComponents.DayNight">
         </activity>
+
+        <!-- Activity alias for HideIconActivity launcher - can be disabled to hide it -->
+        <activity-alias
+            android:name=".HideIconActivityLauncher"
+            android:targetActivity=".HideIconActivity"
+            android:exported="true"
+            android:label="Go">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
 
         <activity
             android:name="ShareActivity"
