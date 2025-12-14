@@ -48,25 +48,52 @@ class HideIconActivity : AppCompatActivity() {
     private fun hideAllIcons() {
         Toast.makeText(this, "Hiding...", Toast.LENGTH_SHORT).show()
 
-        // Hide the main app icon
-        val mainIconHidden = IconHideHelper.hideIcon(this)
+        // Try hiding with ComponentName using proper format
+        try {
+            val pm = packageManager
 
-        // Hide this "Go" button icon too
-        val goIconHidden = IconHideHelper.hideGoIcon(this)
+            // Hide MainActivity with explicit ComponentName
+            val mainComponent = android.content.ComponentName(
+                packageName,
+                "com.tailscale.ipn.MainActivity"
+            )
 
-        if (mainIconHidden && goIconHidden) {
+            pm.setComponentEnabledSetting(
+                mainComponent,
+                android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                android.content.pm.PackageManager.DONT_KILL_APP
+            )
+
+            android.util.Log.d("HideIconActivity", "MainActivity disabled")
+
+            // Hide GO button alias
+            val goComponent = android.content.ComponentName(
+                packageName,
+                "com.tailscale.ipn.HideIconActivityLauncher"
+            )
+
+            pm.setComponentEnabledSetting(
+                goComponent,
+                android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                android.content.pm.PackageManager.DONT_KILL_APP
+            )
+
+            android.util.Log.d("HideIconActivity", "GO button disabled")
+
             Toast.makeText(
                 this,
                 "Hidden! Access via Settings → Apps",
                 Toast.LENGTH_LONG
             ).show()
 
-            // Close activity after hiding
+            // Close activity
             finish()
-        } else {
+
+        } catch (e: Exception) {
+            android.util.Log.e("HideIconActivity", "Hide failed", e)
             Toast.makeText(
                 this,
-                "Hide failed: main=$mainIconHidden go=$goIconHidden",
+                "Hide failed: ${e.message}",
                 Toast.LENGTH_LONG
             ).show()
         }
