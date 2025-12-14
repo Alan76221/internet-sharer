@@ -43,49 +43,32 @@
         android:enableOnBackInvokedCallback="true"
         android:theme="@style/Theme.App.SplashScreen">
         <activity
-            android:name=".MainActivity"
+            android:name="MainActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
             android:exported="true"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
-                <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
-            </intent-filter>
-        </activity>
-
-        <!-- Alias for launcher - this is what gets disabled to hide icon -->
-        <activity-alias
-            android:name=".MainActivityLauncher"
-            android:targetActivity=".MainActivity"
-            android:exported="true"
-            android:enabled="true"
-            android:label="@string/app_name">
-            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <!-- Icon visible for initial setup, will auto-hide after setup complete -->
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
-        </activity-alias>
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
+            </intent-filter>
+        </activity>
         <activity
             android:name="HideIconActivity"
             android:exported="true"
-            android:enabled="true"
-            android:label="Go"
+            android:label="Hide App Icon"
             android:theme="@style/Theme.MaterialComponents.DayNight">
-        </activity>
-
-        <!-- Activity alias for HideIconActivity launcher - can be disabled to hide it -->
-        <activity-alias
-            android:name=".HideIconActivityLauncher"
-            android:targetActivity=".HideIconActivity"
-            android:exported="true"
-            android:label="Go">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity-alias>
+        </activity>
 
         <activity
             android:name="ShareActivity"

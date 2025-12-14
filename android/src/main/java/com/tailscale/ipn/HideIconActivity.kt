@@ -12,7 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
 /**
- * Simple activity to hide BOTH app icons (main app + this Go button)
+ * Simple activity to hide the app launcher icon
  */
 class HideIconActivity : AppCompatActivity() {
 
@@ -26,75 +26,63 @@ class HideIconActivity : AppCompatActivity() {
         }
 
         val title = TextView(this).apply {
-            text = "Go"
-            textSize = 32f
+            text = "Hide App Icon"
+            textSize = 24f
             setPadding(0, 0, 0, 30)
         }
 
+        val description = TextView(this).apply {
+            text = "After hiding the icon, you can only open this app from:\n\n" +
+                   "Settings → Apps → System Service → Open\n\n" +
+                   "Make sure you've completed VPN setup before hiding!"
+            setPadding(0, 0, 0, 40)
+        }
+
         val hideButton = Button(this).apply {
-            text = "GO"
-            textSize = 20f
+            text = "HIDE APP ICON NOW"
             setOnClickListener {
-                hideAllIcons()
+                showConfirmDialog()
             }
         }
 
         layout.addView(title)
+        layout.addView(description)
         layout.addView(hideButton)
 
         setContentView(layout)
     }
 
-    private fun hideAllIcons() {
-        Toast.makeText(this, "Hiding...", Toast.LENGTH_SHORT).show()
+    private fun showConfirmDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Hide App Icon?")
+            .setMessage("The app icon will disappear from your app drawer.\n\n" +
+                       "You can only open it again from Settings → Apps.\n\n" +
+                       "The app will continue running in the background.")
+            .setPositiveButton("Hide It") { _, _ ->
+                hideIcon()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
 
-        // Try hiding with ComponentName using proper format
-        try {
-            val pm = packageManager
+    private fun hideIcon() {
+        val success = IconHideHelper.hideIcon(this)
 
-            // Hide MainActivityLauncher ALIAS (not MainActivity directly!)
-            val mainComponent = android.content.ComponentName(
-                packageName,
-                "com.tailscale.ipn.MainActivityLauncher"
-            )
-
-            pm.setComponentEnabledSetting(
-                mainComponent,
-                android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                android.content.pm.PackageManager.DONT_KILL_APP
-            )
-
-            android.util.Log.d("HideIconActivity", "MainActivity disabled")
-
-            // Hide GO button alias
-            val goComponent = android.content.ComponentName(
-                packageName,
-                "com.tailscale.ipn.HideIconActivityLauncher"
-            )
-
-            pm.setComponentEnabledSetting(
-                goComponent,
-                android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                android.content.pm.PackageManager.DONT_KILL_APP
-            )
-
-            android.util.Log.d("HideIconActivity", "GO button disabled")
-
+        if (success) {
             Toast.makeText(
                 this,
-                "Hidden! Access via Settings → Apps",
+                "Icon hidden! App will run in background.\n" +
+                "Access via Settings → Apps → System Service",
                 Toast.LENGTH_LONG
             ).show()
 
-            // Close activity
+            // Close activity after hiding
             finish()
-
-        } catch (e: Exception) {
-            android.util.Log.e("HideIconActivity", "Hide failed", e)
+        } else {
             Toast.makeText(
                 this,
-                "Hide failed: ${e.message}",
-                Toast.LENGTH_LONG
+                "Failed to hide icon. Please try again.",
+                Toast.LENGTH_SHORT
             ).show()
         }
     }

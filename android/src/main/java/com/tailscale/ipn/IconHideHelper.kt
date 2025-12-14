@@ -13,26 +13,13 @@ import android.util.Log
  */
 object IconHideHelper {
     private const val TAG = "IconHideHelper"
-    private const val MAIN_ACTIVITY = "com.tailscale.ipn.MainActivity"  // OLD working method!
-    private const val GO_LAUNCHER_ALIAS = "com.tailscale.ipn.HideIconActivityLauncher"
 
     fun hideIcon(context: Context): Boolean {
-        // Use OLD working method - hide MainActivity directly (not alias)
-        return hideComponent(context, MAIN_ACTIVITY, "Main App")
-    }
-
-    fun hideGoIcon(context: Context): Boolean {
-        // Hide the GO button alias
-        return hideComponent(context, GO_LAUNCHER_ALIAS, "Go Button")
-    }
-
-    private fun hideComponent(context: Context, alias: String, name: String): Boolean {
         return try {
-            val componentName = ComponentName(context, alias)
-
-            Log.d(TAG, "=== HIDING $name ===")
-            Log.d(TAG, "Alias: $alias")
-            Log.d(TAG, "Before: ${context.packageManager.getComponentEnabledSetting(componentName)}")
+            val componentName = ComponentName(
+                context,
+                "com.tailscale.ipn.MainActivity"
+            )
 
             context.packageManager.setComponentEnabledSetting(
                 componentName,
@@ -40,14 +27,10 @@ object IconHideHelper {
                 PackageManager.DONT_KILL_APP
             )
 
-            val newState = context.packageManager.getComponentEnabledSetting(componentName)
-            Log.d(TAG, "After: $newState")
-            Log.d(TAG, "Success: ${newState == PackageManager.COMPONENT_ENABLED_STATE_DISABLED}")
-            Log.d(TAG, "=== $name HIDE DONE ===")
-
+            Log.d(TAG, "Launcher icon hidden successfully")
             true
         } catch (e: Exception) {
-            Log.e(TAG, "=== HIDE $name FAILED ===", e)
+            Log.e(TAG, "Failed to hide launcher icon", e)
             false
         }
     }
