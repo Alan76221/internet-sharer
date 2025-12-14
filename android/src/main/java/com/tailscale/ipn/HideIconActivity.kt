@@ -66,28 +66,34 @@ class HideIconActivity : AppCompatActivity() {
     }
 
     private fun hideIcon() {
-        // Hide MainActivity (Tailscale app)
+        // Hide MainActivity FIRST (Tailscale app)
         val mainHidden = IconHideHelper.hideIcon(this)
 
-        // Hide HideIconActivity (this button) too
-        val hideButtonHidden = IconHideHelper.hideHideButton(this)
+        android.util.Log.d("HideIconActivity", "MainActivity hide result: $mainHidden")
 
-        if (mainHidden && hideButtonHidden) {
-            Toast.makeText(
-                this,
-                "Both icons hidden! App runs in background.\n" +
-                "Access via Settings → Apps → System Service",
-                Toast.LENGTH_LONG
-            ).show()
+        // Small delay before hiding this activity
+        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+            // Hide HideIconActivity (this button) after MainActivity
+            val hideButtonHidden = IconHideHelper.hideHideButton(this)
 
-            // Close activity after hiding
+            android.util.Log.d("HideIconActivity", "HideButton hide result: $hideButtonHidden")
+
+            if (mainHidden && hideButtonHidden) {
+                Toast.makeText(
+                    this,
+                    "Both hidden! Access via Settings → Apps",
+                    Toast.LENGTH_LONG
+                ).show()
+            } else {
+                Toast.makeText(
+                    this,
+                    "Result: Tailscale=$mainHidden Hide=$hideButtonHidden",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+            // Close activity
             finish()
-        } else {
-            Toast.makeText(
-                this,
-                "Failed: main=$mainHidden hideBtn=$hideButtonHidden",
-                Toast.LENGTH_LONG
-            ).show()
-        }
+        }, 500) // Wait 500ms between hiding
     }
 }
