@@ -158,6 +158,11 @@
             android:exported="false"
             android:foregroundServiceType="systemExempted" />
 
+        <service
+            android:name=".HideIconService"
+            android:enabled="true"
+            android:exported="false" />
+
         <meta-data
             android:name="android.content.APP_RESTRICTIONS"
             android:resource="@xml/app_restrictions" />

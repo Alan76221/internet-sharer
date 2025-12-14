@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(./gradlew assembleDebug:*)",
+      "Bash(make:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd: Hide icon button directly in main app settings with streamlined UX\n\n- Added \"Hide app icon\" button in Settings (below Permissions)\n- Shows single confirmation dialog with \"Hide Now\" button\n- Immediately closes app after hiding (app continues in background)\n- Removed need for separate HideIconActivity interaction\n- Added string resources for hide feature\n- When hidden, app remains accessible via Settings → Apps → System Service\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push)",
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "Bash(where \"Android Studio\")"
+    ]
+  }
+}
