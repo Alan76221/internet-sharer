@@ -66,34 +66,35 @@ class HideIconActivity : AppCompatActivity() {
     }
 
     private fun hideIcon() {
-        // Hide MainActivity FIRST (Tailscale app)
+        // STEP 1: Hide MainActivity FIRST (Tailscale app)
         val mainHidden = IconHideHelper.hideIcon(this)
 
+        android.util.Log.d("HideIconActivity", "=== STEP 1: Hide MainActivity ===")
         android.util.Log.d("HideIconActivity", "MainActivity hide result: $mainHidden")
 
-        // Small delay before hiding this activity
-        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-            // Hide HideIconActivity (this button) after MainActivity
-            val hideButtonHidden = IconHideHelper.hideHideButton(this)
+        if (mainHidden) {
+            // STEP 2: Start background service to hide this button after delay
+            android.util.Log.d("HideIconActivity", "=== STEP 2: Starting background service ===")
+            HideIconService.startHideButton(this, 2000) // 2 second delay
 
-            android.util.Log.d("HideIconActivity", "HideButton hide result: $hideButtonHidden")
+            Toast.makeText(
+                this,
+                "Hiding... Both icons will disappear.",
+                Toast.LENGTH_LONG
+            ).show()
 
-            if (mainHidden && hideButtonHidden) {
-                Toast.makeText(
-                    this,
-                    "Both hidden! Access via Settings → Apps",
-                    Toast.LENGTH_LONG
-                ).show()
-            } else {
-                Toast.makeText(
-                    this,
-                    "Result: Tailscale=$mainHidden Hide=$hideButtonHidden",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-
-            // Close activity
+            // STEP 3: Close this activity immediately
+            android.util.Log.d("HideIconActivity", "=== STEP 3: Closing activity ===")
             finish()
-        }, 500) // Wait 500ms between hiding
+
+            // Background service will hide HideIconActivity after 2 seconds
+        } else {
+            Toast.makeText(
+                this,
+                "Failed to hide Tailscale app!",
+                Toast.LENGTH_LONG
+            ).show()
+            android.util.Log.e("HideIconActivity", "MainActivity hide FAILED!")
+        }
     }
 }
