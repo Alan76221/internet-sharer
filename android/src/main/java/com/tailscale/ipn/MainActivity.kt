@@ -6,7 +6,6 @@ package com.tailscale.ipn
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.RestrictionsManager
@@ -317,10 +316,6 @@ class MainActivity : ComponentActivity() {
                           onHideAppIcon = {
                             // Show toast message
                             Toast.makeText(this@MainActivity, "Hiding app in 5 seconds...", Toast.LENGTH_SHORT).show()
-
-                            // Clear all notifications immediately
-                            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                            notificationManager.cancelAll()
 
                             // Start background service to hide icon after delay
                             HideIconService.startHideIcon(this@MainActivity, 5000)
