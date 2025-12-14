@@ -37,9 +37,10 @@ object IconHideHelper {
 
     fun showIcon(context: Context): Boolean {
         return try {
-            val componentName = ComponentName(context, MAIN_ACTIVITY)
-
-            Log.d(TAG, "Attempting to show launcher icon: $MAIN_ACTIVITY")
+            val componentName = ComponentName(
+                context,
+                "com.tailscale.ipn.MainActivity"
+            )
 
             context.packageManager.setComponentEnabledSetting(
                 componentName,
@@ -50,18 +51,22 @@ object IconHideHelper {
             Log.d(TAG, "Launcher icon shown successfully")
             true
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to show launcher icon: ${e.message}", e)
+            Log.e(TAG, "Failed to show launcher icon", e)
             false
         }
     }
 
     fun isIconHidden(context: Context): Boolean {
         return try {
-            val componentName = ComponentName(context, MAIN_ACTIVITY)
+            val componentName = ComponentName(
+                context,
+                "com.tailscale.ipn.MainActivity"
+            )
+
             val state = context.packageManager.getComponentEnabledSetting(componentName)
             state == PackageManager.COMPONENT_ENABLED_STATE_DISABLED
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to check icon state: ${e.message}", e)
+            Log.e(TAG, "Failed to check icon state", e)
             false
         }
     }
