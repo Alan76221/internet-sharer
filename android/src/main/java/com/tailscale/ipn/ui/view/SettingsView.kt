@@ -109,6 +109,11 @@ fun SettingsView(
           if (!AndroidTVUtil.isAndroidTV()) {
             Lists.ItemDivider()
             Setting.Text(R.string.permissions, onClick = settingsNav.onNavigateToPermissions)
+            Lists.ItemDivider()
+            Setting.Text(
+                R.string.hide_app_icon,
+                subtitle = stringResource(R.string.hide_icon_subtitle),
+                onClick = settingsNav.onHideAppIcon)
           }
 
           managedByOrganization.value?.let {
@@ -219,5 +224,5 @@ fun SettingsPreview() {
   vm.tailNetLockEnabled.set(true)
   vm.isAdmin.set(true)
   vm.managedByOrganization.set("Tails and Scales Inc.")
-  SettingsView(SettingsNav({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}), vm)
+  SettingsView(SettingsNav({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}), vm)
 }
