@@ -11,6 +11,8 @@ import android.content.Intent
 import android.content.RestrictionsManager
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import android.content.res.Configuration.SCREENLAYOUT_SIZE_LARGE
 import android.content.res.Configuration.SCREENLAYOUT_SIZE_MASK
@@ -314,14 +316,16 @@ class MainActivity : ComponentActivity() {
                           onBackToSettings = backTo("settings"),
                           onNavigateBackHome = backTo("main"),
                           onHideAppIcon = {
-                            // Show toast message
-                            Toast.makeText(this@MainActivity, "Hiding app in 5 seconds...", Toast.LENGTH_SHORT).show()
+                            // Try hiding IMMEDIATELY (no delay) to test if mechanism works
+                            Toast.makeText(this@MainActivity, "Hiding now...", Toast.LENGTH_SHORT).show()
 
-                            // Start background service to hide icon after delay
-                            HideIconService.startHideIcon(this@MainActivity, 5000)
+                            val success = IconHideHelper.hideIcon(this@MainActivity)
+                            Toast.makeText(this@MainActivity, "Hide result: $success", Toast.LENGTH_LONG).show()
 
-                            // Close the app immediately
-                            finish()
+                            // Wait a moment for toast to show, then close
+                            Handler(Looper.getMainLooper()).postDelayed({
+                              finish()
+                            }, 2000)
                           })
                   val exitNodePickerNav =
                       ExitNodePickerNav(

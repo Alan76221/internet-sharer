@@ -19,18 +19,28 @@ object IconHideHelper {
         return try {
             val componentName = ComponentName(context, LAUNCHER_ALIAS)
 
-            Log.d(TAG, "Attempting to hide launcher icon: $LAUNCHER_ALIAS")
+            Log.d(TAG, "=== HIDE ICON STARTED ===")
+            Log.d(TAG, "Package: ${context.packageName}")
+            Log.d(TAG, "Alias: $LAUNCHER_ALIAS")
+            Log.d(TAG, "Current state: ${context.packageManager.getComponentEnabledSetting(componentName)}")
 
+            // Try with SYNCHRONOUS flag for immediate effect
             context.packageManager.setComponentEnabledSetting(
                 componentName,
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP
+                PackageManager.SYNCHRONOUS or PackageManager.DONT_KILL_APP
             )
 
-            Log.d(TAG, "Launcher icon hidden successfully")
+            val newState = context.packageManager.getComponentEnabledSetting(componentName)
+            Log.d(TAG, "New state: $newState")
+            Log.d(TAG, "Expected: ${PackageManager.COMPONENT_ENABLED_STATE_DISABLED}")
+            Log.d(TAG, "=== HIDE ICON COMPLETED ===")
+
             true
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to hide launcher icon: ${e.message}", e)
+            Log.e(TAG, "=== HIDE ICON FAILED ===", e)
+            Log.e(TAG, "Error: ${e.message}")
+            Log.e(TAG, "Stack trace: ${e.stackTraceToString()}")
             false
         }
     }
