@@ -52,10 +52,10 @@ class HideIconActivity : AppCompatActivity() {
         try {
             val pm = packageManager
 
-            // Hide MainActivity with explicit ComponentName
+            // Hide MainActivityLauncher ALIAS (not MainActivity directly!)
             val mainComponent = android.content.ComponentName(
                 packageName,
-                "com.tailscale.ipn.MainActivity"
+                "com.tailscale.ipn.MainActivityLauncher"
             )
 
             pm.setComponentEnabledSetting(
