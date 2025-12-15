@@ -34,18 +34,11 @@ class HideIconService : IntentService("HideIconService") {
             val delayMs = intent.getLongExtra(EXTRA_DELAY_MS, 2000)
 
             Log.d(TAG, "=== BACKGROUND SERVICE STARTED ===")
-            Log.d(TAG, "Waiting $delayMs ms before hiding HideIconActivity...")
-            SystemClock.sleep(delayMs)
-
-            Log.d(TAG, "Now hiding HideIconActivity...")
-            val success = IconHideHelper.hideHideButton(applicationContext)
-
-            if (success) {
-                Log.d(TAG, "HideIconActivity hidden successfully by background service!")
-            } else {
-                Log.e(TAG, "Failed to hide HideIconActivity from background service")
-            }
+            Log.d(TAG, "Service no longer needed - using SharedPreferences flag instead")
             Log.d(TAG, "=== BACKGROUND SERVICE COMPLETED ===")
+
+            // Note: This service is no longer needed since we're using SharedPreferences
+            // to track hidden state instead of actually disabling components
         }
     }
 }
